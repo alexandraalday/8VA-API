@@ -5,12 +5,12 @@ class ArtistsController < ApplicationController
   def index
     @artists = Artist.all.reverse
 
-    render json: @artists
+    render json: @artists.to_json(include: { tracks: { include: :genre }})
   end
 
   # GET /artists/1
   def show
-    render json: @artist
+    render json: @artist.to_json(include: { tracks: { include: :genre }})
   end
 
   # POST /artists
@@ -18,7 +18,8 @@ class ArtistsController < ApplicationController
     @artist = Artist.new(artist_params)
 
     if @artist.save
-      render json: @artist, status: :created, location: @artist
+      @artist.save_attachments(artist_params) if params[:artist][:track_data]
+      render json: @artist, status: :created
     else
       render json: @artist.errors, status: :unprocessable_entity
     end
@@ -46,6 +47,6 @@ class ArtistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def artist_params
-      params.require(:artist).permit(:name, :email, :status)
+      params.require(:artist).permit(:name, :email, :status, :mp3, :track_data => [])
     end
 end

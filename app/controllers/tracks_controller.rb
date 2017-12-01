@@ -1,5 +1,5 @@
 class TracksController < ApplicationController
-  before_action :set_track, only: [:show, :update, :destroy]
+  before_action :set_track, only: [:show, :update, :destroy, :download]
 
   # GET /tracks
   def index
@@ -16,6 +16,7 @@ class TracksController < ApplicationController
   # POST /tracks
   def create
     @track = Track.new(track_params)
+    @track.artist_id = params[:artist_id]
 
     if @track.save
       render json: @track, status: :created, location: @track
@@ -38,6 +39,10 @@ class TracksController < ApplicationController
     @track.destroy
   end
 
+  def download
+    send_file @track.mp3.path, :type => 'audio/mpeg', :filename => @track.mp3_file_name
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_track
@@ -46,6 +51,6 @@ class TracksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def track_params
-      params.require(:track).permit(:name)
+      params.fetch(:track, {}).permit(:name, :artist_id, :mp3, :genre_id)
     end
 end

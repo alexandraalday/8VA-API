@@ -5,3 +5,18 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+require 'faker'
+
+5.times do
+  Artist.create(
+    name: Faker::Lovecraft.unique.tome,
+    email: Faker::Internet.unique.email,
+    status: ["New", "Accepted", "Rejected"].sample,
+  )
+end
+
+Genre.create([
+  { name: "Country" },
+  { name: "Western" },
+  { name: "Other" },
+])

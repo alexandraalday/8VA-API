@@ -1,5 +1,5 @@
 class Track < ApplicationRecord
-	belongs_to :band
+	belongs_to :artist
 	belongs_to :genre
 	has_attached_file :mp3,
 					  :url => '/:class/:id/:style.:extension',
